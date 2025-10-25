@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".RegisterActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:gravity="center_horizontal">
+
+        <!-- Ícono del escudo -->
+        <ImageView
+            android:id="@+id/ivIcono"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_alert_red"
+            android:contentDescription="@string/app_name"
+            android:layout_marginTop="60dp" />
+
+        <!-- Título principal -->
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/registrarse_title"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#212121"
+            android:layout_marginTop="24dp" />
+
+        <!-- Campo: Nombre -->
+        <EditText
+            android:id="@+id/etNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre"
+            android:inputType="textPersonName"
+            android:backgroundTint="#9E9E9E"
+            android:layout_marginTop="24dp"
+            android:padding="10dp" />
+
+        <!-- Campo: Apellido -->
+        <EditText
+            android:id="@+id/etApellido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Apellido"
+            android:inputType="textPersonName"
+            android:backgroundTint="#9E9E9E"
+            android:layout_marginTop="12dp"
+            android:padding="10dp" />
+
+        <!-- Campo: Correo electrónico -->
+        <EditText
+            android:id="@+id/etCorreo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Correo electrónico"
+            android:inputType="textEmailAddress"
+            android:backgroundTint="#9E9E9E"
+            android:layout_marginTop="12dp"
+            android:padding="10dp" />
+
+        <!-- Campo: Contraseña -->
+        <EditText
+            android:id="@+id/etContrasenia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Contraseña"
+            android:inputType="textPassword"
+            android:backgroundTint="#9E9E9E"
+            android:layout_marginTop="12dp"
+            android:padding="10dp" />
+
+        <!-- Botón: Registrarse -->
+        <Button
+            android:id="@+id/btnRegistrarse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="REGISTRARSE"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#2E7D32"
+            android:layout_marginTop="24dp"
+            android:padding="12dp" />
+
+        <!-- Texto inferior -->
+        <TextView
+            android:id="@+id/tvTerminos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Al registrarte, aceptas nuestros términos y condiciones"
+            android:textSize="13sp"
+            android:textColor="#757575"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:textAlignment="center" />
+    </LinearLayout>
+</ScrollView>
