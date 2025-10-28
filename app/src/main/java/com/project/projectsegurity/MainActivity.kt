@@ -3,9 +3,12 @@ package com.project.projectsegurity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -14,7 +17,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -23,14 +28,17 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.project.projectsegurity.detector.ObjectDetector
+import com.project.projectsegurity.detector.VideoAnalyzer
+import kotlinx.coroutines.launch
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
+import okio.BufferedSink
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -41,52 +49,68 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var btnRegistrar: Button
     private var map: GoogleMap? = null
 
-    // Variables para conservar estado
-    private var savedDescripcion: String? = null
-    private var savedFotoTexto: String? = null
-    private var savedFotoVisible: Boolean = false
     private var ultimaLatitud: Double? = null
     private var ultimaLongitud: Double? = null
     private var ultimoArchivo: File? = null
+
+    private val objectDetector by lazy { ObjectDetector(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
         etDescripcion = findViewById(R.id.etDescripcion)
         btnFoto = findViewById(R.id.btnFoto)
         tvFotoCapturada = findViewById(R.id.tvFotoCapturada)
         btnRegistrar = findViewById(R.id.btnRegistrar)
 
-        // Bloquear edición manual
         etDescripcion.isEnabled = false
         etDescripcion.isFocusable = false
         etDescripcion.isCursorVisible = false
 
-        // Restaurar estado
-        if (savedInstanceState != null) {
-            savedDescripcion = savedInstanceState.getString("descripcion_text")
-            savedFotoTexto = savedInstanceState.getString("foto_text")
-            savedFotoVisible = savedInstanceState.getBoolean("foto_visible", false)
+        checkAndRequestPermissions()
 
-            etDescripcion.setText(savedDescripcion)
-            tvFotoCapturada.text = savedFotoTexto
-            tvFotoCapturada.visibility = if (savedFotoVisible) View.VISIBLE else View.GONE
-        }
-
-        // Mapa
         val mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // Abrir cámara
-        btnFoto.setOnClickListener {
-            val intent = Intent(this, DetectarActivity::class.java)
-            detectarActivityLauncher.launch(intent)
+        // 🔁 Restaurar estado después de rotar
+        if (savedInstanceState != null) {
+            val textoGuardado = savedInstanceState.getString("tvFotoCapturada_text", "")
+            val visibleGuardado = savedInstanceState.getBoolean("tvFotoCapturada_visible", false)
+            if (textoGuardado.isNotEmpty()) {
+                tvFotoCapturada.text = textoGuardado
+                tvFotoCapturada.visibility = if (visibleGuardado) View.VISIBLE else View.GONE
+            }
+
+            val pathArchivo = savedInstanceState.getString("ultimoArchivoPath")
+            if (!pathArchivo.isNullOrEmpty()) {
+                val file = File(pathArchivo)
+                if (file.exists()) {
+                    ultimoArchivo = file
+                }
+            }
         }
 
-        // Registrar (envío de datos al servidor)
+        btnFoto.setOnClickListener {
+            val opciones = arrayOf("📸 Tomar foto", "🎥 Grabar video")
+            AlertDialog.Builder(this)
+                .setTitle("Seleccionar tipo de captura")
+                .setItems(opciones) { _, which ->
+                    when (which) {
+                        0 -> {
+                            val intent = Intent(this, DetectarActivity::class.java)
+                            detectarActivityLauncher.launch(intent)
+                        }
+                        1 -> {
+                            val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            videoCaptureLauncher.launch(intent)
+                        }
+                    }
+                }.show()
+        }
+
         btnRegistrar.setOnClickListener {
             val descripcion = etDescripcion.text.toString().trim()
             if (descripcion.isEmpty()) {
@@ -96,22 +120,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             } else if (ultimoArchivo == null) {
                 Toast.makeText(this, "Archivo no disponible", Toast.LENGTH_SHORT).show()
             } else {
-
-
                 enviarReporteAlServidor(descripcion, ultimaLatitud!!, ultimaLongitud!!, ultimoArchivo!!)
             }
         }
     }
 
-    // Guardar estado
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("descripcion_text", etDescripcion.text.toString())
-        outState.putString("foto_text", tvFotoCapturada.text.toString())
-        outState.putBoolean("foto_visible", tvFotoCapturada.visibility == View.VISIBLE)
+    private fun checkAndRequestPermissions() {
+        val permisos = arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        val faltantes = permisos.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+        if (faltantes.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, faltantes.toTypedArray(), 100)
+        }
     }
 
-    // Recibir resultado desde DetectarActivity
     private val detectarActivityLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -120,9 +148,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val descripcionAuto = result.data?.getStringExtra("descripcion_auto")
 
                 if (!fileName.isNullOrEmpty()) {
-                     val mensaje =
-                        "📸 Archivo generado correctamente:\n$fileName"
-                    tvFotoCapturada.text = mensaje
+                    tvFotoCapturada.text = "📸 Archivo generado: $fileName"
                     tvFotoCapturada.visibility = View.VISIBLE
                 }
 
@@ -130,7 +156,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     etDescripcion.setText(descripcionAuto)
                 }
 
-                // Guardar referencia al archivo real
                 if (!filePath.isNullOrEmpty()) {
                     val file = File(filePath)
                     if (file.exists()) ultimoArchivo = file
@@ -138,7 +163,73 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-    // Mapa
+    private val videoCaptureLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            try {
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val videoUri: Uri? = result.data?.data
+                    if (videoUri != null) {
+                        val videoFile = uriToFile(videoUri)
+                        if (videoFile != null) {
+                            tvFotoCapturada.text = "🎥 Video capturado: ${videoFile.name}"
+                            tvFotoCapturada.visibility = View.VISIBLE
+                            ultimoArchivo = videoFile
+
+                            lifecycleScope.launch {
+                                val analyzer = VideoAnalyzer(this@MainActivity, objectDetector)
+                                val results = analyzer.analyzeVideo(videoFile)
+                                val delitoDetectado = results.find {
+                                    it.label == "robo" || it.label == "incendio"
+                                }
+
+                                if (delitoDetectado != null) {
+                                    etDescripcion.setText(
+                                        "Posible ${delitoDetectado.label} detectado con ${
+                                            "%.2f".format(delitoDetectado.confidence * 100)
+                                        }% de confianza"
+                                    )
+                                } else {
+                                    etDescripcion.setText("No se detectaron actos delictivos en el video.")
+                                }
+                            }
+                        } else {
+                            Toast.makeText(this, "⚠️ No se pudo procesar el video", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error procesando video", e)
+                Toast.makeText(this, "Error procesando video: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+
+    private fun uriToFile(uri: Uri): File? {
+        return try {
+            val inputStream = contentResolver.openInputStream(uri)
+                ?: throw IllegalStateException("No se pudo abrir InputStream del URI: $uri")
+
+            val tempFile = File.createTempFile("video_temp", ".mp4", cacheDir)
+            FileOutputStream(tempFile).use { output ->
+                inputStream.copyTo(output)
+            }
+
+            Log.i("MainActivity", "Video copiado a: ${tempFile.absolutePath}")
+            tempFile
+        } catch (e: SecurityException) {
+            Log.e("MainActivity", "Permiso denegado al leer URI: $uri", e)
+            runOnUiThread {
+                Toast.makeText(this, "No se pudo acceder al video (permiso denegado)", Toast.LENGTH_LONG).show()
+            }
+            null
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error convirtiendo URI a archivo", e)
+            runOnUiThread {
+                Toast.makeText(this, "Error al procesar el video: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+            null
+        }
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         map?.apply {
@@ -149,7 +240,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         enableMyLocation()
     }
 
-    // Habilitar ubicación
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -170,11 +260,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // 🚀 Enviar reporte al backend con OkHttp
     private fun enviarReporteAlServidor(descripcion: String, latitud: Double, longitud: Double, tempFile: File) {
         Thread {
             try {
-                val fileBody: RequestBody = tempFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                val fileType = if (tempFile.extension.lowercase() == "mp4") "video/mp4" else "image/jpeg"
+
+                val fileBody = object : RequestBody() {
+                    override fun contentType() = fileType.toMediaTypeOrNull()
+                    override fun writeTo(sink: BufferedSink) {
+                        FileInputStream(tempFile).use { input ->
+                            val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                            var bytesRead: Int
+                            while (input.read(buffer).also { bytesRead = it } != -1) {
+                                sink.write(buffer, 0, bytesRead)
+                            }
+                        }
+                    }
+                }
 
                 val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
                     .addFormDataPart("descripcion", descripcion)
@@ -184,21 +286,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     .build()
 
                 val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
-                val client = OkHttpClient.Builder().addInterceptor(logging).build()
 
-                // ⚠️ Asegúrate de usar la IP de tu PC o servidor real
+                val client = OkHttpClient.Builder()
+                    .addInterceptor(logging)
+                    .connectTimeout(120, TimeUnit.SECONDS)
+                    .writeTimeout(180, TimeUnit.SECONDS)
+                    .readTimeout(180, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
+                    .build()
+
                 val request = Request.Builder()
-                    //.url("http://192.168.18.238:8086/api/reportes/guardar")
                     .url("http://projectsecuritypeople-env-1.eba-jum2mh2y.us-east-1.elasticbeanstalk.com/api/reportes/guardar")
                     .post(requestBody)
                     .build()
 
                 val response = client.newCall(request).execute()
-
                 runOnUiThread {
                     if (response.isSuccessful) {
-                        Toast.makeText(this, "✅ Reporte enviado correctamente al servidor", Toast.LENGTH_LONG).show()
-                        tvFotoCapturada.text=""
+                        Toast.makeText(this, "✅ Reporte enviado correctamente", Toast.LENGTH_LONG).show()
+                        tvFotoCapturada.text = ""
                         etDescripcion.setText("")
                     } else {
                         Toast.makeText(this, "❌ Error al enviar: ${response.message}", Toast.LENGTH_LONG).show()
@@ -207,9 +313,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             } catch (e: Exception) {
                 Log.e("UPLOAD_ERROR", "Error enviando reporte", e)
                 runOnUiThread {
-                    Toast.makeText(this, "⚠️ Error de conexión: ${e.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "⚠️ Error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }.start()
+    }
+
+    // 🔁 Guardar estado al rotar (para conservar texto y archivo)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("tvFotoCapturada_text", tvFotoCapturada.text.toString())
+        outState.putBoolean("tvFotoCapturada_visible", tvFotoCapturada.visibility == View.VISIBLE)
+        outState.putString("ultimoArchivoPath", ultimoArchivo?.absolutePath)
     }
 }

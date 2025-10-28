@@ -17,7 +17,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var etCorreo: EditText
     private lateinit var etContrasenia: EditText
     private lateinit var btnRegistrarse: Button
-    private lateinit var tvTerminos: TextView
+    private lateinit var btnSalir: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +29,9 @@ class RegisterActivity : AppCompatActivity() {
         etCorreo = findViewById(R.id.etCorreo)
         etContrasenia = findViewById(R.id.etContrasenia)
         btnRegistrarse = findViewById(R.id.btnRegistrarse)
-        tvTerminos = findViewById(R.id.tvTerminos)
+        btnSalir = findViewById(R.id.btnSalir)
 
+        // --- Evento del botón REGISTRARSE ---
         btnRegistrarse.setOnClickListener {
             val nombre = etNombre.text.toString().trim()
             val apellido = etApellido.text.toString().trim()
@@ -49,6 +50,14 @@ class RegisterActivity : AppCompatActivity() {
 
             registrarUsuario(nombre, apellido, correo, contrasenia)
         }
+
+        // --- Evento del botón SALIR ---
+        btnSalir.setOnClickListener {
+            Toast.makeText(this, "Regresando al inicio de sesión", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun registrarUsuario(nombre: String, apellido: String, correo: String, contrasenia: String) {
@@ -66,7 +75,7 @@ class RegisterActivity : AppCompatActivity() {
         val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val client = OkHttpClient.Builder().addInterceptor(logging).build()
 
-        // ⚠️ Reemplaza con la IP de tu PC (no localhost)
+        // ⚠️ Reemplaza con tu URL correcta si usas servidor local
         val request = Request.Builder()
             //.url("http://192.168.18.238:8086/api/usuarios/registro")
             .url("http://projectsecuritypeople-env-1.eba-jum2mh2y.us-east-1.elasticbeanstalk.com/api/usuarios/registro")
@@ -96,13 +105,13 @@ class RegisterActivity : AppCompatActivity() {
                             Toast.LENGTH_LONG
                         ).show()
 
-                        // 🧼 Limpiar campos
+                        // Limpiar campos
                         etNombre.text.clear()
                         etApellido.text.clear()
                         etCorreo.text.clear()
                         etContrasenia.text.clear()
 
-                        // 🔁 Redirigir al LoginActivity
+                        // Redirigir al LoginActivity
                         val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
                         startActivity(intent)
                         finish()
