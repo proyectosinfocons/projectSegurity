@@ -28,6 +28,12 @@ class LoginActivity : AppCompatActivity() {
         binding.tvOlvidoContrasena.setOnClickListener {
             Toast.makeText(this, "Funcionalidad para recuperar contraseña", Toast.LENGTH_SHORT).show()
         }
+
+        // 🔐 Recuperar contraseña
+        binding.tvOlvidoContrasena.setOnClickListener {
+            startActivity(Intent(this, ForgotPasswordActivity::class.java))
+        }
+
     }
 
     private fun iniciarSesion() {

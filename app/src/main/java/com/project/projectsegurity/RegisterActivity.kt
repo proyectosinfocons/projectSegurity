@@ -77,8 +77,8 @@ class RegisterActivity : AppCompatActivity() {
 
         // ⚠️ Reemplaza con tu URL correcta si usas servidor local
         val request = Request.Builder()
-            //.url("http://192.168.18.238:8086/api/usuarios/registro")
-            .url("http://projectsecuritypeople-env-1.eba-jum2mh2y.us-east-1.elasticbeanstalk.com/api/usuarios/registro")
+            //.url("http://10.0.2.2:8080/api/usuarios/registro")
+            .url("http://projectsecuritypeople-env.eba-h4uxw7uz.us-east-1.elasticbeanstalk.com/api/usuarios/registro")
             .post(body)
             .build()
 

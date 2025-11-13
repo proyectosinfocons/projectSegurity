@@ -16,7 +16,7 @@ data class Detection(val label: String, val confidence: Float)
 class ObjectDetector(private val context: Context) {
 
     private var model: Module? = null
-    private val labels = listOf("robo", "incendio") // ✅ orden correcto
+    private val labels = listOf("robo") // ✅ orden correcto
 
     init {
         try {

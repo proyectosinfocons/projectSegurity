@@ -115,8 +115,7 @@ class DetectarActivity : AppCompatActivity() {
                                 val detections = detector.detectObjects(bitmap)
                                 if (detections.isNotEmpty()) {
                                     val delito = detections.firstOrNull {
-                                        it.label.equals("robo", true) ||
-                                                it.label.equals("incendio", true)
+                                        it.label.equals("robo", true)
                                     }
 
                                     if (delito != null) {

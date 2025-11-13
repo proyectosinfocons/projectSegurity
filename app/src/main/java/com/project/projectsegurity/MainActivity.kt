@@ -179,7 +179,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                 val analyzer = VideoAnalyzer(this@MainActivity, objectDetector)
                                 val results = analyzer.analyzeVideo(videoFile)
                                 val delitoDetectado = results.find {
-                                    it.label == "robo" || it.label == "incendio"
+                                    it.label == "robo"
                                 }
 
                                 if (delitoDetectado != null) {
@@ -296,7 +296,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     .build()
 
                 val request = Request.Builder()
-                    .url("http://projectsecuritypeople-env-1.eba-jum2mh2y.us-east-1.elasticbeanstalk.com/api/reportes/guardar")
+                    .url("http://projectsecuritypeople-env.eba-h4uxw7uz.us-east-1.elasticbeanstalk.com/api/reportes/guardar")
                     .post(requestBody)
                     .build()
 
