@@ -16,7 +16,6 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // --- Eventos de botones ---
         binding.btnIniciarSesion.setOnClickListener {
             iniciarSesion()
         }

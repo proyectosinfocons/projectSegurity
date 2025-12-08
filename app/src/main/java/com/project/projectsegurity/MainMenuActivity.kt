@@ -9,9 +9,8 @@ class MainMenuActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_menu) // <-- debe coincidir con tu archivo XML
+        setContentView(R.layout.activity_main_menu) 
 
-        // Importante: findViewById después de setContentView
         val layoutReportarDelito = findViewById<LinearLayout>(R.id.layoutReportarDelito)
 
         layoutReportarDelito.setOnClickListener {

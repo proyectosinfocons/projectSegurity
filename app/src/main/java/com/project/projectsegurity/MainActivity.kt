@@ -319,7 +319,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }.start()
     }
 
-    // 🔁 Guardar estado al rotar (para conservar texto y archivo)
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("tvFotoCapturada_text", tvFotoCapturada.text.toString())
