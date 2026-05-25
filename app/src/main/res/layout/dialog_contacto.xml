@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- 🔹 INPUT NOMBRE -->
+    <EditText
+        android:id="@+id/etNombreContacto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre"
+        android:padding="10dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- ========================================================= -->
+    <!-- 🔥 CAMBIO INICIO -->
+    <!-- 👉 Nuevo campo APELLIDO -->
+    <!-- 👉 Permite guardar el apellido del contacto -->
+    <!-- ========================================================= -->
+    <EditText
+        android:id="@+id/etApellidoContacto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Apellido"
+        android:padding="10dp"
+        android:layout_marginBottom="8dp"/>
+    <!-- 🔥 CAMBIO FIN -->
+
+
+    <!-- 🔹 INPUT TELEFONO -->
+    <EditText
+        android:id="@+id/etTelefonoContacto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Teléfono"
+        android:maxLength="9"
+        android:inputType="phone"
+        android:padding="10dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- 🔹 INPUT CORREO -->
+    <EditText
+        android:id="@+id/etCorreoContacto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Correo"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
+        android:layout_marginBottom="12dp"/>
+
+
+    <!-- ========================================================= -->
+    <!-- 🔥 CAMBIO INICIO -->
+    <!-- 👉 Spinner (ComboBox) para RELACION -->
+    <!-- 👉 El usuario selecciona el tipo de relación -->
+    <!-- ========================================================= -->
+    <Spinner
+        android:id="@+id/spRelacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"/>
+    <!-- 🔥 CAMBIO FIN -->
+
+
+    <!-- 🔥 ERROR RELACIÓN -->
+    <TextView
+        android:id="@+id/tvErrorRelacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#E53935"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:text="Seleccione una relación"
+        android:layout_marginBottom="8dp"/>
+
+
+
+    <!-- 🔥 LISTA DE CONTACTOS -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerContactos"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"/>
+
+</LinearLayout>

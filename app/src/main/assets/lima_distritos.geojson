@@ -1,0 +1,48 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+{
+  "type": "Feature",
+  "properties": { "NOMBDIST": "COMAS" },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[
+      [-77.0850, -11.9000],
+      [-77.0300, -11.9000],
+      [-77.0300, -11.9650],
+      [-77.0850, -11.9650],
+      [-77.0850, -11.9000]
+    ]]
+  }
+},
+{
+  "type": "Feature",
+  "properties": { "NOMBDIST": "LOS OLIVOS" },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[
+      [-77.1100, -11.9000],
+      [-77.0850, -11.9000],
+      [-77.0850, -11.9400],
+      [-77.1100, -11.9400],
+      [-77.1100, -11.9000]
+    ]]
+  }
+},
+
+{
+  "type": "Feature",
+  "properties": { "NOMBDIST": "SAN MARTIN DE PORRES" },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[
+      [-77.1200, -11.9400],
+      [-77.0850, -11.9400],
+      [-77.0850, -12.0000],
+      [-77.1200, -12.0000],
+      [-77.1200, -11.9400]
+    ]]
+  }
+}
+  ]
+}

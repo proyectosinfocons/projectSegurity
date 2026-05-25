@@ -51,9 +51,45 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.appcompat)
 
+
+
+    // ===============================
+    // 🔥 INICIO CAMBIO: LIBRERÍA PDF
+    // 👉 AQUÍ DEBES PONERLO (dentro de dependencies)
+    // 👉 Sirve para generar PDF con texto e imágenes
+    // ===============================
+    implementation("com.itextpdf:itextg:5.5.10")
+    // ===============================
+    // 🔥 FIN CAMBIO
+    // ===============================
+
+
+
+
+    // =====================================================
+    // 🔥 INICIO CAMBIO: Phone Number Hint API
+    // =====================================================
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    // =====================================================
+    // 🔥 FIN CAMBIO
+    // =====================================================
+
+
+
     // ✅ Google Maps y ubicación
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+
+
+
+    // =====================================================
+// 🔥 INICIO CAMBIO: GEOJSON (CLAVE)
+// =====================================================
+    implementation("com.google.maps.android:android-maps-utils:3.8.2")
+// 🔥 FIN CAMBIO
+// =====================================================
+
+
     implementation(libs.androidx.camera.core)
 
     // ✅ OkHttp para peticiones HTTP + logs

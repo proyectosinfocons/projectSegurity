@@ -71,11 +71,28 @@
             android:id="@+id/etContrasenia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLength="10"
             android:hint="Contraseña"
             android:inputType="textPassword"
             android:backgroundTint="#9E9E9E"
             android:layout_marginTop="12dp"
             android:padding="10dp" />
+
+        <!-- CONTACTOS -->
+        <TextView
+            android:id="@+id/tvContactos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contactos: 0/4"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"/>
+
+        <Button
+            android:id="@+id/btnAgregarContacto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Agregar contacto de emergencia"
+            android:layout_marginTop="10dp"/>
 
         <!-- Contenedor horizontal para botones -->
         <LinearLayout

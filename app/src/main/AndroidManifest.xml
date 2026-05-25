@@ -25,7 +25,22 @@
     <!-- 🔔 Vibración -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- 🔥 SMS -->
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+
     <!-- 📌 Opcional: características del dispositivo -->
+
+    <!-- ========================================================= -->
+    <!-- 🔥 INICIO CAMBIO: DECLARAR SOPORTE DE TELEFONÍA (SMS) -->
+    <!-- Esto evita el warning: "Permission exists without corresponding hardware" -->
+    <!-- ========================================================= -->
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+    <!-- ========================================================= -->
+    <!-- 🔥 FIN CAMBIO -->
+    <!-- ========================================================= -->
+
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
 
@@ -69,6 +84,11 @@
         <activity android:name=".MainActivity" android:exported="false" />
         <activity android:name=".RegisterActivity" android:exported="false" />
         <activity android:name=".ForgotPasswordActivity" android:exported="false" />
+        <activity android:name=".PerfilActivity" android:exported="false" />
+        <activity android:name=".MapActivity" android:exported="false" />
+        <activity android:name=".HistorialActivity" android:exported="false" />
+        <activity android:name=".DetalleReporteActivity" android:exported="false" />
+
 
 
         <!-- 🎯 NUEVA: Actividad de detección con CameraX -->

@@ -60,6 +60,7 @@
 
         <!-- Opción: Mapa de zonas peligrosas -->
         <LinearLayout
+            android:id="@+id/layoutMapa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -82,30 +83,31 @@
         </LinearLayout>
 
         <!-- Opción: Alerta -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="16dp">
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:padding="16dp">-->
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_bell"
-                app:tint="#388E3C" />
+<!--            <ImageView-->
+<!--                android:layout_width="40dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:src="@drawable/ic_bell"-->
+<!--                app:tint="#388E3C" />-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Alerta"
-                android:textSize="18sp"
-                android:layout_marginStart="16dp"
-                android:textColor="#000000" />
-        </LinearLayout>
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Alerta"-->
+<!--                android:textSize="18sp"-->
+<!--                android:layout_marginStart="16dp"-->
+<!--                android:textColor="#000000" />-->
+<!--        </LinearLayout>-->
 
         <!-- Opción: Historial -->
         <LinearLayout
+            android:id="@+id/layoutHistorial"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -122,6 +124,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Historial"
+                android:textSize="18sp"
+                android:layout_marginStart="16dp"
+                android:textColor="#000000" />
+        </LinearLayout>
+
+        <!-- Opción: Botón de pánico -->
+        <LinearLayout
+            android:id="@+id/layoutPanico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_warning"
+                app:tint="#FF0000" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Botón de pánico"
                 android:textSize="18sp"
                 android:layout_marginStart="16dp"
                 android:textColor="#000000" />
@@ -160,7 +186,51 @@
         </LinearLayout>
 
         <!-- Botón: Mapa -->
+<!--        <LinearLayout-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="1"-->
+<!--            android:orientation="vertical"-->
+<!--            android:gravity="center">-->
+
+<!--            <ImageView-->
+<!--                android:layout_width="24dp"-->
+<!--                android:layout_height="24dp"-->
+<!--                android:src="@drawable/ic_map"-->
+<!--                app:tint="#757575" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Mapa"-->
+<!--                android:textColor="#757575"-->
+<!--                android:textSize="12sp" />-->
+<!--        </LinearLayout>-->
+
+        <!-- Botón: Historial -->
+<!--        <LinearLayout-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="1"-->
+<!--            android:orientation="vertical"-->
+<!--            android:gravity="center">-->
+
+<!--            <ImageView-->
+<!--                android:layout_width="24dp"-->
+<!--                android:layout_height="24dp"-->
+<!--                android:src="@drawable/ic_list"-->
+<!--                app:tint="#757575" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Historial"-->
+<!--                android:textColor="#757575"-->
+<!--                android:textSize="12sp" />-->
+<!--        </LinearLayout>-->
+
         <LinearLayout
+            android:id="@+id/layoutPerfil"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -170,19 +240,20 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_map"
+                android:src="@drawable/ic_user"
                 app:tint="#757575" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mapa"
+                android:text="Perfil"
                 android:textColor="#757575"
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Botón: Historial -->
+        <!-- 🔥 NUEVO: BOTÓN SALIR EN BARRA INFERIOR -->
         <LinearLayout
+            android:id="@+id/layoutSalir"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -192,13 +263,13 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_list"
-                app:tint="#757575" />
+                android:src="@drawable/ic_logout"
+            app:tint="#757575" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Historial"
+                android:text="Cerrar Sesión"
                 android:textColor="#757575"
                 android:textSize="12sp" />
         </LinearLayout>

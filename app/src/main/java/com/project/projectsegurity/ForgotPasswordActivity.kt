@@ -49,8 +49,8 @@ class ForgotPasswordActivity : AppCompatActivity() {
     }
 
     private fun sendRecoveryRequest(email: String) {
-        val url = "http://projectsecuritypeople-env.eba-h4uxw7uz.us-east-1.elasticbeanstalk.com/api/usuarios/recuperar?correo=$email"
-
+        val url = "http://192.168.18.238:8080/api/usuarios/recuperar?correo=$email"
+        //val url = "https://appalertacomunitaria.com/api/usuarios/recuperar?correo=$email"
         val request = Request.Builder()
             .url(url)
             .get()

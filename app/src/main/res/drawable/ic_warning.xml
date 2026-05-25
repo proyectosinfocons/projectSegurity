@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 🚨 Base de la sirena -->
+    <path
+        android:fillColor="#B71C1C"
+        android:pathData="M6,14h12v4H6z"/>
+
+    <!-- 🔴 Luz de la sirena -->
+    <path
+        android:fillColor="#FF5252"
+        android:pathData="M12,4c-3,0 -5,2 -5,5v3h10v-3c0,-3 -2,-5 -5,-5z"/>
+
+    <!-- ✨ Destellos -->
+    <path
+        android:fillColor="#FF0000"
+        android:pathData="M12,1l1,2h-2z"/>
+
+    <path
+        android:fillColor="#FF0000"
+        android:pathData="M3,10l2,1v-2z"/>
+
+    <path
+        android:fillColor="#FF0000"
+        android:pathData="M21,10l-2,1v-2z"/>
+
+</vector>

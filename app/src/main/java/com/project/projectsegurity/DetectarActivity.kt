@@ -160,8 +160,9 @@ class DetectarActivity : AppCompatActivity() {
 
                                     if (valorPorcentaje < 80.0) {
 
-                                        resultText.text =
-                                            "⚠️ No se detectó un acto criminal.\nNivel de confianza: $porcentaje%"
+                                    //    resultText.text =
+                                            //"⚠️ No se detectó un acto criminal.\nNivel de confianza: $porcentaje%"
+                                        resultText.text ="✅ No se detectaron actividades sospechosas."
 
                                         lastResultText = resultText.text.toString()
 

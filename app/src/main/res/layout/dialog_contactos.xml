@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutPrincipal"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- ===================================================== -->
+    <!-- 🔥 TÍTULO: MANTENIMIENTO DE CONTACTOS -->
+    <!-- 👉 Muestra el encabezado del popup -->
+    <!-- 👉 Indica al usuario la funcionalidad del formulario -->
+    <!-- ===================================================== -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MANTENIMIENTO DE CONTACTOS"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:layout_marginBottom="12dp"/>
+    <!-- 🔹 CONTENEDOR FORM -->
+    <LinearLayout
+        android:id="@+id/layoutForm"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/etNombreContacto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre"
+            android:padding="10dp"/>
+        <!-- ===================================================== -->
+        <!-- 🔥 CAMBIO INICIO -->
+        <!-- 👉 Nuevo campo APELLIDO -->
+        <!-- 👉 Permite capturar el apellido del contacto -->
+        <!-- ===================================================== -->
+        <EditText
+            android:id="@+id/etApellidoContacto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Apellido"
+            android:padding="10dp"/>
+        <!-- 🔥 CAMBIO FIN -->
+
+        <EditText
+            android:id="@+id/etTelefonoContacto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Teléfono"
+            android:maxLength="9"
+            android:inputType="phone"
+            android:padding="10dp"/>
+
+        <EditText
+            android:id="@+id/etCorreoContacto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Correo"
+            android:inputType="textEmailAddress"
+            android:padding="10dp"/>
+
+        <!-- ===================================================== -->
+        <!-- 🔥 CAMBIO INICIO -->
+        <!-- 👉 Spinner para RELACIÓN -->
+        <!-- 👉 Incluye opción por defecto "Seleccione su relación" -->
+        <!-- ===================================================== -->
+        <Spinner
+            android:id="@+id/spRelacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <!-- 🔥 CAMBIO FIN -->
+
+    </LinearLayout>
+
+    <!-- 🔥 BOTONES PRINCIPALES -->
+    <Button
+        android:id="@+id/btnGuardarContacto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="AGREGAR CONTACTO"
+        android:backgroundTint="#43A047"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/btnActualizarContacto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="GUARDAR CAMBIOS"
+        android:backgroundTint="#1976D2"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="8dp"/>
+
+    <!-- 🔥 NUEVO: BOTONES SOLO MODO AGREGAR -->
+    <Button
+        android:id="@+id/btnGuardarLocal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="GUARDAR"
+        android:visibility="gone"
+        android:backgroundTint="#4CAF50"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="8dp"/>
+
+<!--    <Button-->
+<!--        android:id="@+id/btnCerrarLocal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="CERRAR"-->
+<!--        android:visibility="gone"-->
+<!--        android:backgroundTint="#9E9E9E"-->
+<!--        android:textColor="#FFFFFF"-->
+<!--        android:layout_marginTop="8dp"/>-->
+
+    <!-- 🔥 LISTA -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerContactos"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="12dp"/>
+
+</LinearLayout>

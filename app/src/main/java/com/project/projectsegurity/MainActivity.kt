@@ -21,7 +21,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -47,6 +51,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var btnFoto: Button
     private lateinit var tvFotoCapturada: TextView
     private lateinit var btnRegistrar: Button
+
+    // 🔥 CAMBIO 1: NUEVO BOTÓN SALIR
+    private lateinit var btnSalir: Button
+
     private var map: GoogleMap? = null
 
     private var ultimaLatitud: Double? = null
@@ -65,6 +73,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         tvFotoCapturada = findViewById(R.id.tvFotoCapturada)
         btnRegistrar = findViewById(R.id.btnRegistrar)
 
+        // 🔥 CAMBIO 2: INICIALIZAR BOTÓN
+        btnSalir = findViewById(R.id.btnSalir)
+
         etDescripcion.isEnabled = false
         etDescripcion.isFocusable = false
         etDescripcion.isCursorVisible = false
@@ -73,6 +84,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        // 🔥 CAMBIO 3: EVENTO DEL BOTÓN SALIR
+        btnSalir.setOnClickListener {
+
+            val intent = Intent(this, MainMenuActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
+        }
+
 
         // 🔁 Restaurar estado después de rotar
         if (savedInstanceState != null) {
@@ -92,23 +113,29 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
+//        btnFoto.setOnClickListener {
+//            val opciones = arrayOf("📸 Tomar foto", "🎥 Grabar video")
+//            AlertDialog.Builder(this)
+//                .setTitle("Seleccionar tipo de captura")
+//                .setItems(opciones) { _, which ->
+//                    when (which) {
+//                        0 -> {
+//                            val intent = Intent(this, DetectarActivity::class.java)
+//                            detectarActivityLauncher.launch(intent)
+//                        }
+//                        1 -> {
+//                            val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+//                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//                            videoCaptureLauncher.launch(intent)
+//                        }
+//                    }
+//                }.show()
+//        }
+
+
         btnFoto.setOnClickListener {
-            val opciones = arrayOf("📸 Tomar foto", "🎥 Grabar video")
-            AlertDialog.Builder(this)
-                .setTitle("Seleccionar tipo de captura")
-                .setItems(opciones) { _, which ->
-                    when (which) {
-                        0 -> {
                             val intent = Intent(this, DetectarActivity::class.java)
                             detectarActivityLauncher.launch(intent)
-                        }
-                        1 -> {
-                            val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            videoCaptureLauncher.launch(intent)
-                        }
-                    }
-                }.show()
         }
 
         btnRegistrar.setOnClickListener {
@@ -242,78 +269,142 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED
         ) {
+
             map?.isMyLocationEnabled = true
-            fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
-                loc?.let {
-                    ultimaLatitud = it.latitude
-                    ultimaLongitud = it.longitude
-                    val latLng = LatLng(it.latitude, it.longitude)
-                    map?.addMarker(MarkerOptions().position(latLng).title("Tu ubicación"))
-                    map?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17f))
+
+            val locationRequest = LocationRequest.create().apply {
+                interval = 5000
+                fastestInterval = 2000
+                priority = Priority.PRIORITY_HIGH_ACCURACY
+            }
+
+            val locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+
+                    val location = locationResult.lastLocation
+
+                    if (location != null) {
+
+                        ultimaLatitud = location.latitude
+                        ultimaLongitud = location.longitude
+
+                        Log.d("GPS", "Lat: $ultimaLatitud - Lon: $ultimaLongitud")
+
+                        val latLng = LatLng(location.latitude, location.longitude)
+
+                        map?.clear()
+                        map?.addMarker(MarkerOptions().position(latLng).title("Tu ubicación"))
+                        map?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17f))
+
+                        // 🔥 IMPORTANTE: dejamos de escuchar para ahorrar batería
+                        fusedLocationClient.removeLocationUpdates(this)
+                    }
                 }
             }
+
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                mainLooper
+            )
+
         } else {
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
         }
     }
 
-    private fun enviarReporteAlServidor(descripcion: String, latitud: Double, longitud: Double, tempFile: File) {
+    private fun enviarReporteAlServidor(
+        descripcion: String,
+        latitud: Double,
+        longitud: Double,
+        file: File
+    ) {
+
         Thread {
             try {
-                val fileType = if (tempFile.extension.lowercase() == "mp4") "video/mp4" else "image/jpeg"
 
-                val fileBody = object : RequestBody() {
-                    override fun contentType() = fileType.toMediaTypeOrNull()
-                    override fun writeTo(sink: BufferedSink) {
-                        FileInputStream(tempFile).use { input ->
-                            val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-                            var bytesRead: Int
-                            while (input.read(buffer).also { bytesRead = it } != -1) {
-                                sink.write(buffer, 0, bytesRead)
-                            }
-                        }
+                /* =========================================================
+                   🔥 CAMBIO 1: OBTENER TOKEN JWT
+                   Porque el backend ahora usa Spring Security
+                ========================================================= */
+                val prefs = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
+                val token = prefs.getString("TOKEN", null)
+
+                if (token == null) {
+                    runOnUiThread {
+                        Toast.makeText(this, "No autenticado", Toast.LENGTH_LONG).show()
                     }
+                    return@Thread
                 }
 
-                val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+                val fileBody = RequestBody.create(
+                    "application/octet-stream".toMediaTypeOrNull(),
+                    file
+                )
+
+                val requestBody = MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
                     .addFormDataPart("descripcion", descripcion)
                     .addFormDataPart("latitud", latitud.toString())
                     .addFormDataPart("longitud", longitud.toString())
-                    .addFormDataPart("archivo", tempFile.name, fileBody)
+                    .addFormDataPart("archivo", file.name, fileBody)
                     .build()
-
-                val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
 
                 val client = OkHttpClient.Builder()
-                    .addInterceptor(logging)
-                    .connectTimeout(120, TimeUnit.SECONDS)
-                    .writeTimeout(180, TimeUnit.SECONDS)
-                    .readTimeout(180, TimeUnit.SECONDS)
-                    .retryOnConnectionFailure(true)
+                    .connectTimeout(60, TimeUnit.SECONDS)
                     .build()
 
+                /* =========================================================
+                   🔥 CAMBIO 2: URL LOCAL + AUTHORIZATION HEADER
+                   - localhost en Android = 10.0.2.2 (emulador)
+                   - se agrega Bearer token
+                ========================================================= */
                 val request = Request.Builder()
-                    .url("http://projectsecuritypeople-env.eba-h4uxw7uz.us-east-1.elasticbeanstalk.com/api/reportes/guardar")
+                    .url(
+                        "http://192.168.18.238:8080/api/reportes/guardar"
+                         // "https://appalertacomunitaria.com/api/reportes/guardar"
+                    )
+                    .addHeader("Authorization", "Bearer $token")
                     .post(requestBody)
                     .build()
 
                 val response = client.newCall(request).execute()
+
                 runOnUiThread {
                     if (response.isSuccessful) {
-                        Toast.makeText(this, "✅ Reporte enviado correctamente", Toast.LENGTH_LONG).show()
-                        tvFotoCapturada.text = ""
+                        Toast.makeText(this, "Reporte enviado ✅", Toast.LENGTH_LONG).show()
+
+                        // limpiar descripción
                         etDescripcion.setText("")
+
+                        // limpiar texto del archivo
+                        tvFotoCapturada.text = ""
+
+                        // ocultar el texto
+                        tvFotoCapturada.visibility = View.GONE
+
+                        // limpiar archivo seleccionado
+                        ultimoArchivo = null
+
                     } else {
-                        Toast.makeText(this, "❌ Error al enviar: ${response.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Error: ${response.code}", Toast.LENGTH_LONG).show()
                     }
                 }
+
             } catch (e: Exception) {
-                Log.e("UPLOAD_ERROR", "Error enviando reporte", e)
+
+                /* =========================================================
+                   🔥 CAMBIO 3: MANEJO DE ERRORES
+                   Evita que la app se cierre (tu problema original)
+                ========================================================= */
+                Log.e("ERROR_ENVIO", e.message ?: "")
+
                 runOnUiThread {
-                    Toast.makeText(this, "⚠️ Error: ${e.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }.start()
