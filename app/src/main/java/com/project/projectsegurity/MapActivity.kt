@@ -296,54 +296,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                     )
 
                 // =====================================================
-                // VARIABLES
+                // VALIDAR LISTA
                 // =====================================================
-                var distanciaMinima =
-                    Double.MAX_VALUE
-
-                var marcadorMasCercano:
-                        Marker? = null
-
-                // =====================================================
-                // BUSCAR EL SERVICIO MÁS CERCANO
-                // =====================================================
-                for (marker in listaMarcadoresServicios) {
-
-                    val resultado =
-                        FloatArray(1)
-
-                    android.location.Location.distanceBetween(
-                        origen.latitude,
-                        origen.longitude,
-                        marker.position.latitude,
-                        marker.position.longitude,
-                        resultado
-                    )
-
-                    val distancia =
-                        resultado[0].toDouble()
-
-                    // =====================================================
-                    // GUARDAR EL MÁS CERCANO
-                    // =====================================================
-                    if (distancia < distanciaMinima) {
-
-                        distanciaMinima =
-                            distancia
-
-                        marcadorMasCercano =
-                            marker
-                    }
-                }
-
-                // =====================================================
-                // VALIDAR RESULTADO
-                // =====================================================
-                if (marcadorMasCercano == null) {
+                if (listaMarcadoresServicios.isEmpty()) {
 
                     Toast.makeText(
                         this,
-                        "No se encontraron zonas seguras",
+                        "No hay zonas seguras",
                         Toast.LENGTH_LONG
                     ).show()
 
@@ -351,24 +310,257 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
 
                 // =====================================================
-                // DESTINO
+                // VARIABLES
                 // =====================================================
-                val destino =
-                    marcadorMasCercano.position
+                var menorDistancia =
+                    Double.MAX_VALUE
 
+                var markerMasCercano:
+                        Marker? = null
+
+                // =====================================================
+                // BUSCAR EL MÁS CERCANO
+                // =====================================================
+                for (marker in listaMarcadoresServicios) {
+
+                    try {
+
+                        val resultado =
+                            FloatArray(1)
+
+                        android.location.Location.distanceBetween(
+                            origen.latitude,
+                            origen.longitude,
+                            marker.position.latitude,
+                            marker.position.longitude,
+                            resultado
+                        )
+
+                        val distancia =
+                            resultado[0].toDouble()
+
+                        if (distancia < menorDistancia) {
+
+                            menorDistancia =
+                                distancia
+
+                            markerMasCercano =
+                                marker
+                        }
+
+                    } catch (e: Exception) {
+
+                        e.printStackTrace()
+                    }
+                }
+
+                // =====================================================
+                // VALIDAR RESULTADO
+                // =====================================================
+                if (markerMasCercano == null) {
+
+                    Toast.makeText(
+                        this,
+                        "No se encontró zona segura",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    return@addOnSuccessListener
+                }
+
+                // =====================================================
+                // MOSTRAR INFO WINDOW
+                // =====================================================
+                markerMasCercano.showInfoWindow()
+
+                // =====================================================
+                // MOVER CÁMARA
+                // =====================================================
+                mMap.animateCamera(
+
+                    CameraUpdateFactory
+                        .newLatLngZoom(
+                            markerMasCercano.position,
+                            18f
+                        )
+                )
+
+                // =====================================================
+                // NOMBRE
+                // =====================================================
                 val nombre =
-                    marcadorMasCercano.title
+
+                    markerMasCercano.snippet
                         ?: "Zona Segura"
 
-                // =====================================================
-                // OBTENER RUTA REAL
-                // =====================================================
-                obtenerRutaSegura(
+// =====================================================
+// BUSCAR ENTRADA PRINCIPAL
+// =====================================================
+                buscarEntradaPrincipal(
                     origen,
-                    destino,
-                    nombre
-                )
+                    markerMasCercano
+                ) { entradaPrincipal ->
+
+                    // =====================================================
+// OBTENER ENTRADA REAL
+// =====================================================
+                    obtenerEntradaEdificio(
+                        markerMasCercano
+                    ) { entradaReal ->
+
+                        // =====================================================
+                        // OBTENER RUTA
+                        // =====================================================
+                        obtenerRutaInteligente(
+                            origen,
+                            entradaReal,
+                            nombre,
+                            markerMasCercano
+                        )
+                    }
+                }
             }
+    }
+
+
+
+    // =====================================================
+// OBTENER BORDE DEL EDIFICIO MÁS CERCANO A LA CALLE
+// =====================================================
+    private fun obtenerEntradaEdificio(
+        marker: Marker,
+        callback: (LatLng) -> Unit
+    ) {
+
+        Thread {
+
+            try {
+
+                val lat =
+                    marker.position.latitude
+
+                val lon =
+                    marker.position.longitude
+
+                val query = """
+            [out:json];
+
+            (
+              way(around:40,$lat,$lon)["amenity"="police"];
+            );
+
+            out geom;
+        """.trimIndent()
+
+                val request =
+
+                    Request.Builder()
+                        .url(
+                            "https://overpass-api.de/api/interpreter"
+                        )
+                        .post(
+                            FormBody.Builder()
+                                .add("data", query)
+                                .build()
+                        )
+                        .build()
+
+                val response =
+                    client.newCall(request)
+                        .execute()
+
+                val body =
+                    response.body?.string()
+
+                if (body.isNullOrEmpty()) {
+
+                    runOnUiThread {
+
+                        callback(marker.position)
+                    }
+
+                    return@Thread
+                }
+
+                val json =
+                    JSONObject(body)
+
+                val elements =
+                    json.getJSONArray("elements")
+
+                if (elements.length() == 0) {
+
+                    runOnUiThread {
+
+                        callback(marker.position)
+                    }
+
+                    return@Thread
+                }
+
+                val building =
+                    elements.getJSONObject(0)
+
+                val geometry =
+                    building.getJSONArray("geometry")
+
+                // =====================================================
+                // BUSCAR PUNTO MÁS AL SUR
+                // (MANUEL VILLAR)
+                // =====================================================
+                var mejorLat =
+                    999.0
+
+                var mejorLon =
+                    0.0
+
+                for (i in 0 until geometry.length()) {
+
+                    val punto =
+                        geometry.getJSONObject(i)
+
+                    val pLat =
+                        punto.getDouble("lat")
+
+                    val pLon =
+                        punto.getDouble("lon")
+
+                    // =====================================================
+                    // EL MÁS AL SUR
+                    // =====================================================
+                    if (pLat < mejorLat) {
+
+                        mejorLat =
+                            pLat
+
+                        mejorLon =
+                            pLon
+                    }
+                }
+
+                val entrada =
+
+                    LatLng(
+                        mejorLat,
+                        mejorLon
+                    )
+
+                runOnUiThread {
+
+                    callback(entrada)
+                }
+
+            } catch (e: Exception) {
+
+                e.printStackTrace()
+
+                runOnUiThread {
+
+                    callback(marker.position)
+                }
+            }
+
+        }.start()
     }
 
 
@@ -1682,6 +1874,419 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         }.start()
     }
+
+    // =====================================================
+// OBTENER RUTA INTELIGENTE REAL
+// =====================================================
+    private fun obtenerRutaInteligente(
+        origen: LatLng,
+        destino: LatLng,
+        nombre: String,
+        markerOriginal: Marker
+    ) {
+
+        val url =
+
+            "https://router.project-osrm.org/route/v1/driving/" +
+                    "${origen.longitude},${origen.latitude};" +
+                    "${destino.longitude},${destino.latitude}" +
+                    "?overview=full" +
+                    "&steps=true" +
+                    "&geometries=geojson"
+
+        val request =
+
+            Request.Builder()
+                .url(url)
+                .build()
+
+        client.newCall(request)
+            .enqueue(object : Callback {
+
+                // =====================================================
+                // ERROR
+                // =====================================================
+                override fun onFailure(
+                    call: okhttp3.Call,
+                    e: IOException
+                ) {
+
+                    runOnUiThread {
+
+                        Toast.makeText(
+                            this@MapActivity,
+                            "Error obteniendo ruta",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
+                    e.printStackTrace()
+                }
+
+                // =====================================================
+                // RESPUESTA
+                // =====================================================
+                override fun onResponse(
+                    call: okhttp3.Call,
+                    response: Response
+                ) {
+
+                    try {
+
+                        val body =
+                            response.body?.string()
+
+                        if (body.isNullOrEmpty()) {
+                            return
+                        }
+
+                        val json =
+                            JSONObject(body)
+
+                        val routes =
+                            json.getJSONArray("routes")
+
+                        if (routes.length() == 0) {
+
+                            runOnUiThread {
+
+                                Toast.makeText(
+                                    this@MapActivity,
+                                    "No se encontró ruta",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+
+                            return
+                        }
+
+                        // =====================================================
+                        // ROUTE
+                        // =====================================================
+                        val route =
+                            routes.getJSONObject(0)
+
+                        // =====================================================
+                        // LEGS
+                        // =====================================================
+                        val legs =
+                            route.getJSONArray("legs")
+
+                        val leg =
+                            legs.getJSONObject(0)
+
+                        val steps =
+                            leg.getJSONArray("steps")
+
+                        // =====================================================
+                        // TOMAR ÚLTIMO STEP REAL
+                        // =====================================================
+                        val ultimoStep =
+
+                            if (steps.length() > 1)
+
+                                steps.getJSONObject(
+                                    steps.length() - 2
+                                )
+
+                            else
+
+                                steps.getJSONObject(0)
+
+                        // =====================================================
+                        // MANEUVER
+                        // =====================================================
+                        val maneuver =
+                            ultimoStep.getJSONObject(
+                                "maneuver"
+                            )
+
+                        val location =
+                            maneuver.getJSONArray(
+                                "location"
+                            )
+
+                        val lonFinal =
+                            location.getDouble(0)
+
+                        val latFinal =
+                            location.getDouble(1)
+
+                        val puntoFinal =
+
+                            LatLng(
+                                latFinal,
+                                lonFinal
+                            )
+
+                        // =====================================================
+                        // GEOMETRY
+                        // =====================================================
+                        val geometry =
+                            route.getJSONObject("geometry")
+
+                        val coordinates =
+                            geometry.getJSONArray(
+                                "coordinates"
+                            )
+
+                        // =====================================================
+                        // CONVERTIR PUNTOS
+                        // =====================================================
+                        val puntos =
+                            mutableListOf<LatLng>()
+
+                        for (i in 0 until coordinates.length()) {
+
+                            val punto =
+                                coordinates.getJSONArray(i)
+
+                            val lon =
+                                punto.getDouble(0)
+
+                            val lat =
+                                punto.getDouble(1)
+
+                            puntos.add(
+                                LatLng(lat, lon)
+                            )
+                        }
+
+                        // =====================================================
+                        // REEMPLAZAR ÚLTIMO PUNTO
+                        // =====================================================
+                        if (puntos.isNotEmpty()) {
+
+                            puntos[puntos.size - 1] =
+                                puntoFinal
+                        }
+
+                        runOnUiThread {
+
+                            // =====================================================
+                            // LIMPIAR
+                            // =====================================================
+                            polylineRuta?.remove()
+
+                            // =====================================================
+                            // DIBUJAR RUTA
+                            // =====================================================
+                            polylineRuta =
+
+                                mMap.addPolyline(
+
+                                    PolylineOptions()
+                                        .addAll(puntos)
+                                        .width(18f)
+                                        .color(Color.GREEN)
+                                        .geodesic(true)
+                                        .jointType(
+                                            JointType.ROUND
+                                        )
+                                        .pattern(
+                                            listOf(
+                                                Dot(),
+                                                Gap(18f)
+                                            )
+                                        )
+                                )
+
+                            // =====================================================
+                            // MOSTRAR INFO WINDOW
+                            // =====================================================
+                            markerOriginal.showInfoWindow()
+
+                            // =====================================================
+                            // MOVER CÁMARA
+                            // =====================================================
+                            mMap.animateCamera(
+
+                                CameraUpdateFactory
+                                    .newLatLngZoom(
+                                        puntoFinal,
+                                        19f
+                                    )
+                            )
+
+                            Toast.makeText(
+                                this@MapActivity,
+                                "Ruta segura encontrada",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
+                    } catch (e: Exception) {
+
+                        e.printStackTrace()
+
+                        runOnUiThread {
+
+                            Toast.makeText(
+                                this@MapActivity,
+                                "Error procesando datos",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                }
+            })
+    }
+
+    // =====================================================
+// BUSCAR ENTRADA PRINCIPAL REAL
+// =====================================================
+    private fun buscarEntradaPrincipal(
+        origen: LatLng,
+        marker: Marker,
+        callback: (LatLng) -> Unit
+    ) {
+
+        Thread {
+
+            try {
+
+                val lat =
+                    marker.position.latitude
+
+                val lon =
+                    marker.position.longitude
+
+                // =====================================================
+                // BUSCAR CALLES ALREDEDOR
+                // =====================================================
+                val query = """
+            [out:json];
+
+            (
+              way(around:60,$lat,$lon)["highway"];
+            );
+
+            out geom;
+        """.trimIndent()
+
+                val request =
+
+                    Request.Builder()
+                        .url(
+                            "https://overpass-api.de/api/interpreter"
+                        )
+                        .post(
+                            FormBody.Builder()
+                                .add("data", query)
+                                .build()
+                        )
+                        .build()
+
+                val response =
+                    client.newCall(request)
+                        .execute()
+
+                val body =
+                    response.body?.string()
+
+                if (body.isNullOrEmpty()) {
+
+                    runOnUiThread {
+
+                        callback(marker.position)
+                    }
+
+                    return@Thread
+                }
+
+                val json =
+                    JSONObject(body)
+
+                val elements =
+                    json.getJSONArray("elements")
+
+                // =====================================================
+                // MEJOR ENTRADA
+                // =====================================================
+                var mejorPunto =
+                    marker.position
+
+                var menorDistancia =
+                    Double.MAX_VALUE
+
+                // =====================================================
+                // RECORRER CALLES
+                // =====================================================
+                for (i in 0 until elements.length()) {
+
+                    val obj =
+                        elements.getJSONObject(i)
+
+                    if (!obj.has("geometry")) {
+                        continue
+                    }
+
+                    val geometry =
+                        obj.getJSONArray("geometry")
+
+                    for (j in 0 until geometry.length()) {
+
+                        val punto =
+                            geometry.getJSONObject(j)
+
+                        val pLat =
+                            punto.getDouble("lat")
+
+                        val pLon =
+                            punto.getDouble("lon")
+
+                        val resultado =
+                            FloatArray(1)
+
+                        // =====================================================
+                        // DISTANCIA AL USUARIO
+                        // =====================================================
+                        android.location.Location.distanceBetween(
+                            origen.latitude,
+                            origen.longitude,
+                            pLat,
+                            pLon,
+                            resultado
+                        )
+
+                        val distancia =
+                            resultado[0].toDouble()
+
+                        // =====================================================
+                        // ELEGIR CALLE MÁS CERCANA
+                        // =====================================================
+                        if (distancia < menorDistancia) {
+
+                            menorDistancia =
+                                distancia
+
+                            mejorPunto =
+                                LatLng(
+                                    pLat,
+                                    pLon
+                                )
+                        }
+                    }
+                }
+
+                runOnUiThread {
+
+                    callback(mejorPunto)
+                }
+
+            } catch (e: Exception) {
+
+                e.printStackTrace()
+
+                runOnUiThread {
+
+                    callback(marker.position)
+                }
+            }
+
+        }.start()
+    }
+
 
     // =====================================================
 // IR A ZONA SEGURA MAS CERCANA REAL

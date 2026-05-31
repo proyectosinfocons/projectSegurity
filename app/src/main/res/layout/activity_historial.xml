@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-
-    <!-- 🔴 TÍTULO PRINCIPAL -->
-    <!-- 🔥 CAMBIO INICIO -->
-    <!-- 👉 Indica al usuario que está en la pantalla de historial -->
+    <!-- 🔥 TÍTULO -->
     <TextView
         android:id="@+id/tvTitulo"
         android:layout_width="match_parent"
@@ -20,11 +19,24 @@
         android:textColor="#D32F2F"
         android:gravity="center"
         android:layout_marginBottom="16dp"/>
-    <!-- 🔥 CAMBIO FIN -->
 
-    <!-- ========================================= -->
-    <!-- 🔥 FILTRO TIPO -->
-    <!-- ========================================= -->
+    <!-- 🔥 TIPO DE REPORTES -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tipo de reportes"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:layout_marginBottom="4dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerModoReporte"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- 🔥 TIPO DELITO -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,11 +50,9 @@
         android:id="@+id/spinnerTipo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="12dp"/>
 
-    <!-- ========================================= -->
-    <!-- 🔥 FILTRO PRIORIDAD -->
-    <!-- ========================================= -->
+    <!-- 🔥 PRIORIDAD -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,11 +66,9 @@
         android:id="@+id/spinnerPrioridad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"/>
 
-    <!-- ========================================= -->
-    <!-- 🔥 BOTÓN FILTRAR (HU10) -->
-    <!-- ========================================= -->
+    <!-- 🔥 BOTÓN FILTRAR -->
     <Button
         android:id="@+id/btnFiltrar"
         android:layout_width="match_parent"
@@ -70,10 +78,7 @@
         android:textColor="@android:color/white"
         android:layout_marginBottom="16dp"/>
 
-
-    <!-- ========================================= -->
-    <!-- 🔥 EXPORTAR (HU11) -->
-    <!-- ========================================= -->
+    <!-- 🔥 EXPORTAR PDF -->
     <Button
         android:id="@+id/btnExportar"
         android:layout_width="match_parent"
@@ -83,9 +88,7 @@
         android:textColor="@android:color/white"
         android:layout_marginBottom="16dp"/>
 
-    <!-- ========================================= -->
-    <!-- 🔥 BOTÓN SALIR -->
-    <!-- ========================================= -->
+    <!-- 🔥 SALIR -->
     <Button
         android:id="@+id/btnSalir"
         android:layout_width="match_parent"
@@ -94,9 +97,8 @@
         android:backgroundTint="#D32F2F"
         android:textColor="@android:color/white"
         android:layout_marginBottom="16dp"/>
-    <!-- ========================================= -->
-    <!-- 🔥 LISTA (HU12) -->
-    <!-- ========================================= -->
+
+    <!-- 🔥 LISTA -->
     <ListView
         android:id="@+id/listReportes"
         android:layout_width="match_parent"

@@ -1,277 +1,431 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:orientation="vertical"
+    android:background="#F5F5F5"
     tools:context=".MainMenuActivity">
 
-    <!-- 🔴 Barra superior -->
+    <!-- ================= HEADER ================= -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="70dp"
         android:background="#D32F2F"
-        android:gravity="center">
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:elevation="8dp">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_warning"
+            app:tint="#FFFFFF"/>
 
         <TextView
-            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="INICIO"
+            android:text=" Seguridad Comunitaria"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
-            android:textSize="20sp" />
+            android:textSize="22sp"
+            android:layout_marginStart="8dp"/>
     </LinearLayout>
 
-    <!-- 🔹 Contenido principal -->
+    <!-- ================= BIENVENIDA ================= -->
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bienvenido"
+            android:textStyle="bold"
+            android:textSize="26sp"
+            android:textColor="#000000"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selecciona una opción del sistema"
+            android:textSize="16sp"
+            android:textColor="#616161"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+    <!-- ================= CONTENIDO ================= -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="24dp">
+        android:layout_weight="1">
 
-        <!-- Opción: Reportar delito -->
         <LinearLayout
-            android:id="@+id/layoutReportarDelito"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="16dp">
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_camera"
-                app:tint="#D32F2F" />
+            <!-- ================= REPORTAR ================= -->
+            <LinearLayout
+                android:id="@+id/layoutReportarDelito"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#FFFFFF"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp"
+                android:elevation="4dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Reportar delito"
-                android:textSize="18sp"
-                android:layout_marginStart="16dp"
-                android:textColor="#000000" />
+                <LinearLayout
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="#FFEBEE"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_camera"
+                        app:tint="#D32F2F"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reportar delito"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Registrar incidentes delictivos"
+                        android:textColor="#757575"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ================= MAPA ================= -->
+            <LinearLayout
+                android:id="@+id/layoutMapa"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#FFFFFF"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="#E3F2FD"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_location"
+                        app:tint="#1976D2"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mapa de zonas peligrosas"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Visualizar zonas de riesgo"
+                        android:textColor="#757575"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ================= ALERTAS ================= -->
+            <LinearLayout
+                android:id="@+id/layoutNotificaciones"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#FFFFFF"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp"
+                android:elevation="4dp">
+
+                <!-- ICONO + BADGE -->
+                <FrameLayout
+                    android:layout_width="60dp"
+                    android:layout_height="60dp">
+
+                    <!-- ICONO -->
+                    <LinearLayout
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="#FFF3E0"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_notification"
+                            app:tint="#FF9800"/>
+                    </LinearLayout>
+
+                    <!-- BADGE -->
+                    <TextView
+                        android:id="@+id/tvBadgeNotificaciones"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="end|top"
+                        android:layout_marginTop="-4dp"
+                        android:layout_marginEnd="-4dp"
+                        android:background="@drawable/bg_badge"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
+
+                </FrameLayout>
+
+                <!-- TEXTO -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alertas cercanas"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Recibir notificaciones en tiempo real"
+                        android:textColor="#757575"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ================= HISTORIAL ================= -->
+            <LinearLayout
+                android:id="@+id/layoutHistorial"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#FFFFFF"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="#EEEEEE"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_history"
+                        app:tint="#616161"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Historial"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Consultar reportes realizados"
+                        android:textColor="#757575"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ================= PANICO ================= -->
+            <LinearLayout
+                android:id="@+id/layoutPanico"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#FFEBEE"
+                android:padding="16dp"
+                android:layout_marginBottom="20dp"
+                android:elevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="#D32F2F"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_warning"
+                        app:tint="#FFFFFF"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Botón de pánico"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#D32F2F"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Enviar alerta inmediata"
+                        android:textColor="#757575"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
         </LinearLayout>
 
-        <!-- Opción: Mapa de zonas peligrosas -->
-        <LinearLayout
-            android:id="@+id/layoutMapa"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="16dp">
+    </ScrollView>
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_location"
-                app:tint="#1976D2" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Mapa de zonas peligrosas"
-                android:textColor="#000000"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-        <!-- Opción: Alerta -->
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="horizontal"-->
-<!--            android:gravity="center_vertical"-->
-<!--            android:padding="16dp">-->
-
-<!--            <ImageView-->
-<!--                android:layout_width="40dp"-->
-<!--                android:layout_height="40dp"-->
-<!--                android:src="@drawable/ic_bell"-->
-<!--                app:tint="#388E3C" />-->
-
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Alerta"-->
-<!--                android:textSize="18sp"-->
-<!--                android:layout_marginStart="16dp"-->
-<!--                android:textColor="#000000" />-->
-<!--        </LinearLayout>-->
-
-        <!-- Opción: Historial -->
-        <LinearLayout
-            android:id="@+id/layoutHistorial"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="16dp">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_history"
-                app:tint="#616161" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Historial"
-                android:textSize="18sp"
-                android:layout_marginStart="16dp"
-                android:textColor="#000000" />
-        </LinearLayout>
-
-        <!-- Opción: Botón de pánico -->
-        <LinearLayout
-            android:id="@+id/layoutPanico"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="16dp">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_warning"
-                app:tint="#FF0000" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Botón de pánico"
-                android:textSize="18sp"
-                android:layout_marginStart="16dp"
-                android:textColor="#000000" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <!-- 🔻 Barra inferior de navegación -->
+    <!-- ================= BOTTOM BAR ================= -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="65dp"
         android:orientation="horizontal"
-        android:background="#F5F5F5"
+        android:background="#FFFFFF"
+        android:elevation="8dp"
         android:weightSum="3">
 
-        <!-- Botón: Inicio -->
+        <!-- INICIO -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_home"
-                app:tint="#D32F2F" />
+                app:tint="#D32F2F"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Inicio"
                 android:textColor="#D32F2F"
-                android:textSize="12sp" />
+                android:textStyle="bold"/>
         </LinearLayout>
 
-        <!-- Botón: Mapa -->
-<!--        <LinearLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_weight="1"-->
-<!--            android:orientation="vertical"-->
-<!--            android:gravity="center">-->
-
-<!--            <ImageView-->
-<!--                android:layout_width="24dp"-->
-<!--                android:layout_height="24dp"-->
-<!--                android:src="@drawable/ic_map"-->
-<!--                app:tint="#757575" />-->
-
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Mapa"-->
-<!--                android:textColor="#757575"-->
-<!--                android:textSize="12sp" />-->
-<!--        </LinearLayout>-->
-
-        <!-- Botón: Historial -->
-<!--        <LinearLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_weight="1"-->
-<!--            android:orientation="vertical"-->
-<!--            android:gravity="center">-->
-
-<!--            <ImageView-->
-<!--                android:layout_width="24dp"-->
-<!--                android:layout_height="24dp"-->
-<!--                android:src="@drawable/ic_list"-->
-<!--                app:tint="#757575" />-->
-
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Historial"-->
-<!--                android:textColor="#757575"-->
-<!--                android:textSize="12sp" />-->
-<!--        </LinearLayout>-->
-
+        <!-- PERFIL -->
         <LinearLayout
             android:id="@+id/layoutPerfil"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_user"
-                app:tint="#757575" />
+                app:tint="#616161"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Perfil"
-                android:textColor="#757575"
-                android:textSize="12sp" />
+                android:textColor="#616161"/>
         </LinearLayout>
 
-        <!-- 🔥 NUEVO: BOTÓN SALIR EN BARRA INFERIOR -->
+        <!-- SALIR -->
         <LinearLayout
             android:id="@+id/layoutSalir"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_logout"
-            app:tint="#757575" />
+                app:tint="#616161"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cerrar Sesión"
-                android:textColor="#757575"
-                android:textSize="12sp" />
+                android:text="Salir"
+                android:textColor="#616161"/>
         </LinearLayout>
 
     </LinearLayout>
