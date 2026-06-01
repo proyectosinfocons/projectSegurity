@@ -854,7 +854,8 @@ class RegisterActivity : AppCompatActivity() {
     // 🔥 BASE URL
     // =====================================================
     private val BASE_URL =
-        "http://192.168.18.238:8080"
+        //"http://192.168.18.238:8080"
+        "http://projectsecuritypeople-env.eba-k3djm54f.us-east-2.elasticbeanstalk.com"
         //"https://appalertacomunitaria.com"
     private lateinit var etNombre: EditText
     private lateinit var etApellido: EditText
