@@ -2,8 +2,11 @@ package com.project.projectsegurity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.graphics.Color
 import android.view.View
@@ -17,6 +20,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
@@ -170,6 +174,18 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             findViewById<FloatingActionButton>(
                 R.id.btnMiUbicacion
             )
+
+
+        val btnLeyenda = findViewById<FloatingActionButton>(R.id.btnLeyenda)
+        val layoutLeyenda = findViewById<ScrollView>(R.id.layoutLeyenda)
+
+        btnLeyenda.setOnClickListener {
+            if (layoutLeyenda.visibility == View.VISIBLE) {
+                layoutLeyenda.visibility = View.GONE
+            } else {
+                layoutLeyenda.visibility = View.VISIBLE
+            }
+        }
 // =====================================================
 // LLAMAR MÉTODO EN onCreate()
 // =====================================================
@@ -961,9 +977,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                             // =====================================================
                             // VARIABLES
                             // =====================================================
-                            var color =
-                                BitmapDescriptorFactory
-                                    .HUE_AZURE
+                            var icono: BitmapDescriptor? = null
 
                             var titulo =
                                 "Servicio"
@@ -978,9 +992,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                             ) {
 
                                 // CYAN
-                                color =
-                                    BitmapDescriptorFactory
-                                        .HUE_CYAN
+                                icono =
+                                    bitmapDescriptorFromVector(
+                                        this,
+                                        R.drawable.ic_marker_comisaria
+                                    )
 
                                 titulo =
                                     "👮 COMISARÍA"
@@ -996,9 +1012,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                             ) {
 
                                 // MAGENTA
-                                color =
-                                    BitmapDescriptorFactory
-                                        .HUE_MAGENTA
+                                icono =
+                                    bitmapDescriptorFromVector(
+                                        this,
+                                        R.drawable.ic_marker_municipalidad
+                                    )
 
                                 titulo =
                                     "🏛 MUNICIPALIDAD"
@@ -1018,9 +1036,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                             ) {
 
                                 // ROSADO
-                                color =
-                                    BitmapDescriptorFactory
-                                        .HUE_ROSE
+                                icono =
+                                    bitmapDescriptorFromVector(
+                                        this,
+                                        R.drawable.ic_marker_serenazgo
+                                    )
 
                                 titulo =
                                     "🚓 CASETA SERENAZGO"
@@ -1063,7 +1083,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                                 val marker =
 
                                     mMap.addMarker(
-
                                         MarkerOptions()
                                             .position(
                                                 LatLng(
@@ -1078,10 +1097,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                                                 nombre
                                             )
                                             .icon(
-                                                BitmapDescriptorFactory
-                                                    .defaultMarker(
-                                                        color
-                                                    )
+                                                icono ?: BitmapDescriptorFactory.defaultMarker()
                                             )
                                     )
 
@@ -1846,11 +1862,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                                                 nombreZona
                                             )
                                             .icon(
-                                                BitmapDescriptorFactory
-                                                    .defaultMarker(
-                                                        BitmapDescriptorFactory
-                                                            .HUE_VIOLET
-                                                    )
+                                                bitmapDescriptorFromVector(
+                                                    this,
+                                                    R.drawable.ic_marker_avenida
+                                                )
                                             )
                                     )
 
@@ -1875,7 +1890,37 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         }.start()
     }
+    private fun bitmapDescriptorFromVector(
+        context: Context,
+        vectorResId: Int
+    ): BitmapDescriptor {
 
+        val vectorDrawable =
+            ContextCompat.getDrawable(
+                context,
+                vectorResId
+            )!!
+
+        vectorDrawable.setBounds(
+            0,
+            0,
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight
+        )
+
+        val bitmap =
+            Bitmap.createBitmap(
+                vectorDrawable.intrinsicWidth,
+                vectorDrawable.intrinsicHeight,
+                Bitmap.Config.ARGB_8888
+            )
+
+        val canvas = Canvas(bitmap)
+
+        vectorDrawable.draw(canvas)
+
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
+    }
     // =====================================================
 // OBTENER RUTA INTELIGENTE REAL
 // =====================================================
@@ -3742,11 +3787,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                             "Tu ubicación actual"
                         )
                         .icon(
-                            BitmapDescriptorFactory
-                                .defaultMarker(
-                                    BitmapDescriptorFactory
-                                        .HUE_BLUE
-                                )
+                            bitmapDescriptorFromVector(
+                                this,
+                                R.drawable.ic_marker_ubicacion
+                            )
                         )
                 )
 
@@ -3894,11 +3938,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                         .position(it)
                         .title(distrito)
                         .icon(
-                            BitmapDescriptorFactory
-                                .defaultMarker(
-                                    BitmapDescriptorFactory
-                                        .HUE_GREEN
-                                )
+                            bitmapDescriptorFromVector(
+                                this,
+                                R.drawable.ic_marker_distrito
+                            )
                         )
                 )
 

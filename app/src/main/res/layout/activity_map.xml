@@ -53,6 +53,26 @@
         android:tint="#FFFFFF"
         app:backgroundTint="#388E3C" />
 
+
+
+
+
+
+    <!-- ===================================================== -->
+    <!-- BOTÓN LEYENDA -->
+    <!-- ===================================================== -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnLeyenda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="240dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="Leyenda"
+        android:src="@android:drawable/ic_dialog_info"
+        android:tint="#FFFFFF"
+        app:backgroundTint="#455A64" />
+
     <!-- ================= PANEL SUPERIOR ================= -->
     <LinearLayout
         android:id="@+id/panelFiltros"
@@ -148,5 +168,112 @@
             android:textColor="#FFFFFF" />
 
     </LinearLayout>
+
+    <!-- ===================================================== -->
+    <!-- LEYENDA DEL MAPA -->
+    <!-- ===================================================== -->
+    <ScrollView
+        android:id="@+id/layoutLeyenda"
+        android:visibility="gone"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="90dp"
+        android:background="#CCFFFFFF"
+        android:elevation="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Leyenda"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:paddingBottom="8dp" />
+
+            <!-- ZONAS SEGURAS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Zonas seguras"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔹 Comisarías (Verde Oscuro)"
+                android:textColor="#1B5E20" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔹 Casetas de Serenazgo (Verde Menta Oscuro)"
+                android:textColor="#1ABC9C" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔹 Municipalidades (Verde Claro)"
+                android:textColor="#8BC34A" />
+
+            <!-- REPORTES -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Casos reportados"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔹 Reportes delictivos (Naranja)"
+                android:textColor="#FF6F00" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔹 Botón de pánico (Rojo)"
+                android:textColor="#D50000" />
+
+            <!-- PUNTOS GENÉRICOS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Puntos genéricos"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔹 Distrito seleccionado (Azul claro)"
+                android:textColor="#29B6F6" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔹 Avenida seleccionada (Morado)"
+                android:textColor="#6A1B9A" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔹 Ubicación actual (Azul Intenso)"
+                android:textColor="#1565C0" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </FrameLayout>

@@ -19,11 +19,23 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 
+
+
+import android.app.DatePickerDialog
+import java.util.Calendar
+
+
 class HistorialActivity : AppCompatActivity() {
 
     private lateinit var spinnerModoReporte: Spinner
     private lateinit var spinnerTipo: Spinner
     private lateinit var spinnerPrioridad: Spinner
+
+
+    private lateinit var edtFechaInicio: EditText
+    private lateinit var edtFechaFin: EditText
+
+
 
     private lateinit var btnFiltrar: Button
     private lateinit var btnExportar: Button
@@ -43,11 +55,84 @@ class HistorialActivity : AppCompatActivity() {
         spinnerTipo = findViewById(R.id.spinnerTipo)
         spinnerPrioridad = findViewById(R.id.spinnerPrioridad)
 
+
+        edtFechaInicio =
+            findViewById(R.id.edtFechaInicio)
+
+        edtFechaFin =
+            findViewById(R.id.edtFechaFin)
+
+
         btnFiltrar = findViewById(R.id.btnFiltrar)
         btnExportar = findViewById(R.id.btnExportar)
         btnSalir = findViewById(R.id.btnSalir)
 
         listView = findViewById(R.id.listReportes)
+
+
+
+
+
+
+
+
+
+
+
+
+        edtFechaInicio.setOnClickListener {
+
+            val calendario =
+                Calendar.getInstance()
+
+            DatePickerDialog(
+                this,
+                { _, year, month, day ->
+
+                    edtFechaInicio.setText(
+                        String.format(
+                            "%04d-%02d-%02d",
+                            year,
+                            month + 1,
+                            day
+                        )
+                    )
+                },
+                calendario.get(Calendar.YEAR),
+                calendario.get(Calendar.MONTH),
+                calendario.get(Calendar.DAY_OF_MONTH)
+            ).show()
+        }
+
+
+
+
+
+
+        edtFechaFin.setOnClickListener {
+
+            val calendario =
+                Calendar.getInstance()
+
+            DatePickerDialog(
+                this,
+                { _, year, month, day ->
+
+                    edtFechaFin.setText(
+                        String.format(
+                            "%04d-%02d-%02d",
+                            year,
+                            month + 1,
+                            day
+                        )
+                    )
+                },
+                calendario.get(Calendar.YEAR),
+                calendario.get(Calendar.MONTH),
+                calendario.get(Calendar.DAY_OF_MONTH)
+            ).show()
+        }
+
 
         // =========================================================
         // 🔥 TIPO DE REPORTES
@@ -148,26 +233,61 @@ class HistorialActivity : AppCompatActivity() {
         // 🔥 CARGAR REPORTES TOTALES AL INICIO
         // =========================================================
         obtenerReportesBackend(
-            "http://192.168.18.238:8080/api/reportes"
+            //"http://192.168.18.238:8080/api/reportes"
+                        "http://projectsecuritypeople-env.eba-k3djm54f.us-east-2.elasticbeanstalk.com/api/reportes"
         )
-
-        // =========================================================
-        // 🔥 BOTÓN FILTRAR
-        // =========================================================
         btnFiltrar.setOnClickListener {
 
             val modoReporte =
                 spinnerModoReporte.selectedItem.toString()
 
-            val endpoint = if (
-                modoReporte == "Reportes Totales"
-            ) {
+            val fechaInicio =
+                edtFechaInicio.text.toString()
 
-                "http://192.168.18.238:8080/api/reportes"
+            val fechaFin =
+                edtFechaFin.text.toString()
 
-            } else {
+            val endpoint = when {
 
-                "http://192.168.18.238:8080/api/reportes/mis-reportes"
+                // =====================================================
+                // REPORTES TOTALES CON FECHAS
+                // =====================================================
+                modoReporte == "Reportes Totales" &&
+                        fechaInicio.isNotEmpty() &&
+                        fechaFin.isNotEmpty() -> {
+
+                    "http://projectsecuritypeople-env.eba-k3djm54f.us-east-2.elasticbeanstalk.com/api/reportes/filtrar" +
+                            "?fechaInicio=$fechaInicio" +
+                            "&fechaFin=$fechaFin"
+                }
+
+                // =====================================================
+                // MIS REPORTES CON FECHAS
+                // =====================================================
+                modoReporte == "Mis Reportes" &&
+                        fechaInicio.isNotEmpty() &&
+                        fechaFin.isNotEmpty() -> {
+
+                    "http://projectsecuritypeople-env.eba-k3djm54f.us-east-2.elasticbeanstalk.com/api/reportes/mis-reportes/filtrar" +
+                            "?fechaInicio=$fechaInicio" +
+                            "&fechaFin=$fechaFin"
+                }
+
+                // =====================================================
+                // TODOS LOS REPORTES
+                // =====================================================
+                modoReporte == "Reportes Totales" -> {
+
+                    "http://projectsecuritypeople-env.eba-k3djm54f.us-east-2.elasticbeanstalk.com/api/reportes"
+                }
+
+                // =====================================================
+                // SOLO MIS REPORTES
+                // =====================================================
+                else -> {
+
+                    "http://projectsecuritypeople-env.eba-k3djm54f.us-east-2.elasticbeanstalk.com/api/reportes/mis-reportes"
+                }
             }
 
             obtenerReportesBackend(endpoint)
@@ -527,7 +647,9 @@ class HistorialActivity : AppCompatActivity() {
             val request =
                 Request.Builder()
                     .url(
-                        "http://192.168.18.238:8080/api/reportes/archivo/$id"
+                        //"http://192.168.18.238:8080/api/reportes/archivo/$id"
+                        "http://projectsecuritypeople-env.eba-k3djm54f.us-east-2.elasticbeanstalk.com/api/reportes/archivo/$id"
+
                     )
                     .addHeader(
                         "Authorization",

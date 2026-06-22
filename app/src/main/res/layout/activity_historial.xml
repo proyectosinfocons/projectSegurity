@@ -52,6 +52,77 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"/>
 
+    <!-- FECHAS EN UNA SOLA FILA -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <!-- FECHA INICIO -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Inicio"
+                android:textStyle="bold"
+                android:textSize="14sp"/>
+
+            <EditText
+                android:id="@+id/edtFechaInicio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="yyyy-MM-dd"
+                android:focusable="false"
+                android:clickable="true"
+                android:inputType="none"
+                android:minHeight="48dp"/>
+        </LinearLayout>
+
+        <!-- FECHA FIN -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fin"
+                android:textStyle="bold"
+                android:textSize="14sp"/>
+
+            <EditText
+                android:id="@+id/edtFechaFin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="yyyy-MM-dd"
+                android:focusable="false"
+                android:clickable="true"
+                android:inputType="none"
+                android:minHeight="48dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
     <!-- 🔥 PRIORIDAD -->
     <TextView
         android:layout_width="wrap_content"
@@ -68,35 +139,49 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"/>
 
-    <!-- 🔥 BOTÓN FILTRAR -->
-    <Button
-        android:id="@+id/btnFiltrar"
+    <!-- BOTONES -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Filtrar"
-        android:backgroundTint="#1976D2"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="16dp"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
 
-    <!-- 🔥 EXPORTAR PDF -->
-    <Button
-        android:id="@+id/btnExportar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Exportar PDF"
-        android:backgroundTint="#4CAF50"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="16dp"/>
+        <Button
+            android:id="@+id/btnFiltrar"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Filtrar"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#1976D2"
+            android:layout_marginEnd="4dp"/>
 
-    <!-- 🔥 SALIR -->
-    <Button
-        android:id="@+id/btnSalir"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Salir"
-        android:backgroundTint="#D32F2F"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="16dp"/>
+        <Button
+            android:id="@+id/btnExportar"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="PDF"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#4CAF50"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"/>
+
+        <Button
+            android:id="@+id/btnSalir"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Salir"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#D32F2F"
+            android:layout_marginStart="4dp"/>
+
+    </LinearLayout>
 
     <!-- 🔥 LISTA -->
     <ListView

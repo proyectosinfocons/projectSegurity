@@ -77,7 +77,7 @@ class DetalleReporteActivity : AppCompatActivity() {
         val token = prefs.getString("TOKEN", null)
 
         val request = Request.Builder()
-            .url("http://192.168.18.238:8080/api/reportes/archivo/$id")
+            .url("http://projectsecuritypeople-env.eba-k3djm54f.us-east-2.elasticbeanstalk.com/api/reportes/archivo/$id")
 
             // =========================================================
             // 🔥 CAMBIO: AGREGAR TOKEN
